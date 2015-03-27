@@ -2,16 +2,16 @@
 de la powz, des films
 
 #install
-need https://nodejs.org/
-npm install bower
+  need https://nodejs.org/
+  npm install bower
 
 #API REST
-mkdir apirest/env
-virtualenv apirest/env
-cd apirest
-source apirest/bin/activate
-./install.sh
+  mkdir apirest/env
+  virtualenv apirest/env
+  cd apirest
+  source apirest/bin/activate
+  ./install.sh
 
 #INTERFACE
-cd interface
-npm start
+  cd interface
+  npm start
