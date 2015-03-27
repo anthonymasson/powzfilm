@@ -1,0 +1,10 @@
+*.pyc
+apirest/env
+apirest/.idea
+interface/.idea
+.idea
+*.log
+interface/nbproject
+interface/nbproject/private/
+interface/node_modules
+interface/bower_components
