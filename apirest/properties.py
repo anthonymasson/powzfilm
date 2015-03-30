@@ -1,3 +1,4 @@
+from api_key import API_KEY
 import logging
 import argparse
 
@@ -27,5 +28,21 @@ logging.getLogger('').addHandler(console)
 #Complementary Information
 config.es = config.eshost + '/' + config.index + '/'
 
+class MovieDB:
+    api_key = API_KEY
+    api = 'http://api.themoviedb.org/3'
+    class Urls:
+        pass
+    Urls.genre_movie_list = api + '/genre/movie/list?api_key=' + api_key
+    Urls.movie_by_genre_list = api + '/genre/{id}/movie/list?page={page}&api_key=' + api_key
+    Urls.genre_tv_list = api + '/genre/tv/list?api_key=' + api_key
+    Urls.search_movie = api + '/search/movie?query={query}&page={page}&api_key=' + api_key
+    Urls.detail_movie = api + '/movie/{id}?api_key=' + api_key
+    Urls.search_tv = api + '/search/tv?query={query}&page={page}&api_key=' + api_key
+    Urls.detail_tv = api + '/tv/{id}?api_key=' + api_key
+    Urls.poster_185 = 'https://image.tmdb.org/t/p/w185'
+    Urls.poster_500 = 'https://image.tmdb.org/t/p/w500'
+
 #Print config
 log_api.info('Start with ES : ' + config.es);
+
