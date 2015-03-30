@@ -59,7 +59,6 @@ def get_mdb_movie_genres():
 def get_mdb_tv_genres(id, page="1"):
     log_api.info(request.method + '/mdb/genre/' + id + '/movie/' + page)
     return j.dumps(r.get(MovieDB.Urls.movie_by_genre_list.replace('{id}', id).replace('{page}', page)).json())
-
 #---- MDB SEARCH
 
 #Start api
