@@ -29,7 +29,6 @@ config.es = config.eshost + '/' + config.index + '/'
 class MovieDB:
     def __init__(self):
         pass
-
     api_key = API_KEY
     api = 'http://api.themoviedb.org/3'
     # TV urls
@@ -41,6 +40,7 @@ class MovieDB:
     movie_by_genre_list = api + '/genre/{id}/movie/list?page={page}&api_key=' + api_key
     search_movie = api + '/search/movie?query={query}&page={page}&api_key=' + api_key
     detail_movie = api + '/movie/{id}?api_key=' + api_key
+    # General
     poster_185 = 'https://image.tmdb.org/t/p/w185'
     poster_500 = 'https://image.tmdb.org/t/p/w500'
 
