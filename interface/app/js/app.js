@@ -3,7 +3,11 @@ var powzfilmApp = angular.module('powzfilmApp', [
     'ngTouch',
     'ngCookies',
     'powzfilmControllers'
-]);
+]).directive('thumbailEffect', function() {
+    return function(scope, element, attrs) {
+        update_thumbnail_effect();
+    };
+});;
 
 //'ui.bootstrap.tabs',
 
@@ -15,9 +19,12 @@ powzfilmApp.config(['$routeProvider',
                 templateUrl: 'app/partials/home.html',
                 controller: 'HomeCtrl'
             }).
+            when('/film/add', {
+                templateUrl: 'app/partials/add_film.html',
+                controller: 'AddFilmCtrl'
+            }).
             otherwise({
                 redirectTo: '/home'
             });
     }]);
-
 var powzfilmControllers = angular.module('powzfilmControllers', ['ngRoute', 'ngCookies']);

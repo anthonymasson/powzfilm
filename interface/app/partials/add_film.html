@@ -1,0 +1,43 @@
+<div ng-controller="AddFilmCtrl">
+    
+    
+    <h2>Search imdb</h2>
+    
+    <div ng-hide="selected_imdb">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search imdb" ng-model="search_imdb">
+        </div>
+        <div class="list-group">
+            <a ng-click="select_imdb(k)" class="list-group-item" ng-repeat="(k, res) in imdb_res.results">
+                <div class="row">
+                    <div class="col-md-1">
+                        <img ng-show="res.poster_path" class="img_poster_imdb_search" src="https://image.tmdb.org/t/p/w185{{res.poster_path}}" alt="{{res.title}}">
+                    </div>
+                    <div class="col-md-11">
+                        <h4 class="list-group-item-heading">{{res.title}} <span ng-hide="res.title = res.original_title">({{res.original_title}})</span></h4>
+                        <p class="list-group-item-text">
+                            <b>Release date : </b>{{res.release_date}}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div ng-show="selected_imdb">
+        <div class="row">
+            <div class="col-md-1">
+                <img ng-show="imdb_res.results[selected_imdb].poster_path" class="img_poster_imdb_search" src="https://image.tmdb.org/t/p/w185{{imdb_res.results[selected_imdb].poster_path}}" alt="{{res.title}}">
+            </div>
+            <div class="col-md-10">
+                <h4 class="list-group-item-heading">{{imdb_res.results[selected_imdb].title}} <span ng-hide="imdb_res.results[selected_imdb].title = imdb_res.results[selected_imdb].original_title">({{imdb_res.results[selected_imdb].original_title}})</span></h4>
+                <p class="list-group-item-text">
+                    <b>Release date : </b>{{imdb_res.results[selected_imdb].release_date}}
+                </p>
+            </div>
+            <div class="col-md-1">
+                <a ng-click="change_selected_imdb()">Delete</a>
+            </div>
+        </div>
+    </div>
+    <pre>{{imdb_res.results|json}}</pre>
+</div>
