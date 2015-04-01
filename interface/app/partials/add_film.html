@@ -25,12 +25,16 @@
     </div>
     <div ng-show="selected_imdb">
         <a ng-click="change_selected_imdb()">Unselect</a>
-        <img ng-show="new_movie.poster_path" src="https://image.tmdb.org/t/p/w185{{new_movie.poster_path}}" alt="{{res.title}}">
+        <!--img ng-show="new_movie.poster_path" src="https://image.tmdb.org/t/p/w185{{new_movie.poster_path}}" alt="{{res.title}}"-->
         <div class="form-group">
             <input type="text" class="form-control" placeholder="title" ng-model="new_movie.title">
             <textarea class="form-control" rows="5" class="form-control" placeholder="synopsis" ng-model="new_movie.synopsis"></textarea>
             <input type="text" class="form-control" placeholder="date" ng-model="new_movie.release_date">
-            <b>Genres : </b><span ng-repeat="genre in new_movie.genres"  class="badge">{{genre.name}}</span>
+            <b>Genres : </b><span ng-repeat="(k, genre) in new_movie.genres" ng-click="unselectGenre(k)" class="badge">{{genre.name}}</span>
+            <select>
+                <option>Add genre</option>
+                <option ng-repeat="(k, g) in genres" value="{{k}}">{{g.name}}</option>
+            </select>
         </div>
     </div>
 </div>

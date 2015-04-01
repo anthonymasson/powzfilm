@@ -3,9 +3,9 @@ function Movie(id_imdb, i_movie){
     if (angular.isDefined(i_movie)){
         this.title = i_movie.title;
         this.poster_path = i_movie.poster_path;
-        this.genres = [];
+        this.genres = {};
         for (var g in i_movie.genres)
-            this.genres[this.genres.length] = i_movie.genres[g];
+            this.genres[i_movie.genres[g]['id']] = i_movie.genres[g];
         this.synopsis = i_movie.overview;
         this.spoken_languages = [];
         for (var l in i_movie.spoken_languages)
@@ -29,6 +29,16 @@ powzfilmControllers.controller('AddFilmCtrl', ['$scope', '$location', '$routePar
                console.log(res); 
             });
         };
+        $http.get(API_URLS.genres).success(function (res){
+                $scope.genres = {};
+                for (var r in res['genres'])
+                    $scope.genres[res['genres'][r]['id']] = res['genres'][r];
+            }).error(function (res){
+               console.log(res); 
+            });
+        
+        $scope.unselectGenre = function(id){delete $scope.new_movie.genres[id];};
+        
         $scope.change_selected_imdb = function(){$scope.selected_imdb = false;};
         var filterTextTimeout;
         $scope.$watch('search_imdb', function (val) {
