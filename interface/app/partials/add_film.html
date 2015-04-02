@@ -1,40 +1,64 @@
-<div ng-controller="AddFilmCtrl">
-    
-    
-    <h2>Search imdb</h2>
-    
-    <div ng-hide="selected_imdb">
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search imdb" ng-model="search_imdb">
-        </div>
-        <div class="list-group">
-            <a ng-click="select_imdb(k)" class="list-group-item" ng-repeat="(k, res) in imdb_res.results">
-                <div class="row">
-                    <div class="col-md-1">
-                        <img ng-show="res.poster_path" class="img_poster_imdb_search" src="https://image.tmdb.org/t/p/w185{{res.poster_path}}" alt="{{res.title}}">
-                    </div>
-                    <div class="col-md-11">
-                        <h4 class="list-group-item-heading">{{res.title}} <span ng-hide="res.title = res.original_title">({{res.original_title}})</span></h4>
-                        <p class="list-group-item-text">
-                            <b>Release date : </b>{{res.release_date}}
-                        </p>
-                    </div>
+<div ng-controller="AddFilmCtrl as ctrl">
+    <md-content class="md-padding" layout="column">
+        <form ng-submit="$event.preventDefault()">
+            <md-autocomplete
+                md-selected-item="ctrl.selectedItem"
+                md-search-text="ctrl.searchText"
+                md-selected-item-change="ctrl.selectedItemChange(item)"
+                md-items="item in ctrl.querySearch(ctrl.searchText)"
+                placeholder="Search film to imdb">
+                <span md-highlight-text="ctrl.searchText">{{item.title}} ({{item.release_date|date:yyyy}})</span>
+            </md-autocomplete>
+            <br/>
+        </form>
+        <md-content class="md-padding">
+            <div layout="row" layout-wrap>
+                <div flex>    
+                    <img ng-show="new_movie.poster_path" class="img_poster_imdb_search" src="https://image.tmdb.org/t/p/w185{{new_movie.poster_path}}" alt="{{new_movie.title}}">
                 </div>
-            </a>
-        </div>
-    </div>
-    <div ng-show="selected_imdb">
-        <a ng-click="change_selected_imdb()">Unselect</a>
-        <!--img ng-show="new_movie.poster_path" src="https://image.tmdb.org/t/p/w185{{new_movie.poster_path}}" alt="{{res.title}}"-->
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="title" ng-model="new_movie.title">
-            <textarea class="form-control" rows="5" class="form-control" placeholder="synopsis" ng-model="new_movie.synopsis"></textarea>
-            <input type="text" class="form-control" placeholder="date" ng-model="new_movie.release_date">
-            <b>Genres : </b><span ng-repeat="(k, genre) in new_movie.genres" ng-click="unselectGenre(k)" class="badge">{{genre.name}}</span>
-            <select>
-                <option>Add genre</option>
-                <option ng-repeat="(k, g) in genres" value="{{k}}">{{g.name}}</option>
-            </select>
-        </div>
-    </div>
+                <div flex="80">
+                    <form name="movieForm">
+                        <div layout layout-sm="column">
+                            <md-input-container flex>
+                                <label>imdb id</label>
+                                <input  ng-model="new_movie.imdb_id" disabled>
+                            </md-input-container>
+                            <md-input-container flex="70">
+                                <label>Title</label>
+                                <input ng-model="new_movie.title">
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Release Date</label>
+                                <input type="date" ng-model="new_movie.release_date">
+                            </md-input-container>
+                        </div>
+                        <md-input-container flex>
+                            <label>Synopsis</label>
+                            <textarea ng-model="new_movie.synopsis" columns="1" md-maxlength="1000"></textarea>
+                        </md-input-container>
+                        <h5 class="md-subhead">Genres</h5>
+                        <section layout="row">
+                            <md-select class="noMargin" ng-change="addGenre()" ng-model="genreAdd" placeholder="Add genre">
+                                <md-option value="{{g.id}}" ng-repeat="g in genres" ng-if="genreNoExist(g)">{{g.name}}</md-option>
+                            </md-select>
+                            <md-button  class="md-raised" ng-repeat="g in new_movie.genres" ng-click="removeGenre(g)">{{g.name}}</md-button>
+                        </section>
+                        <section layout="row" layout-sm="column" layout-align="center center">
+                            <md-button class="md-raised md-primary">Save new film</md-button>
+                        </section>
+                </div>
+            </div>
+        </md-content>
+
+        <!--debug-->
+        <h1>Debug</h1>
+        <h2>Json new movie</h2>
+        <pre>{{new_movie|json}}</pre>
+        <br/><br/>
+        <h2>Json select idem</h2>
+        <pre>{{ctrl.selectedItem|json}}</pre>
+    </md-content>
+
+
+
 </div>

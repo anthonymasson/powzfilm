@@ -2,7 +2,9 @@ var powzfilmApp = angular.module('powzfilmApp', [
     'ngRoute',
     'ngTouch',
     'ngCookies',
-    'powzfilmControllers'
+    'powzfilmControllers',
+    'ngMaterial',
+    'ngMdIcons'
 ]).directive('thumbailEffect', function() {
     return function(scope, element, attrs) {
         update_thumbnail_effect();

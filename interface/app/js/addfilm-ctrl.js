@@ -1,68 +1,74 @@
 ////------------[Controllers]
-function Movie(id_imdb, i_movie){
-    if (angular.isDefined(i_movie)){
+function Movie(id_imdb, i_movie) {
+    if (angular.isDefined(i_movie)) {
         this.title = i_movie.title;
         this.poster_path = i_movie.poster_path;
-        this.genres = {};
-        for (var g in i_movie.genres)
-            this.genres[i_movie.genres[g]['id']] = i_movie.genres[g];
+        this.genres = i_movie.genres;
         this.synopsis = i_movie.overview;
         this.spoken_languages = [];
         for (var l in i_movie.spoken_languages)
             this.spoken_languages[this.spoken_languages.length] = i_movie.spoken_languages[l];
         this.imdb_id = id_imdb;
-        this.release_date = i_movie.release_date;
+        this.release_date = new Date(i_movie.release_date);
     }
 }
 
-powzfilmControllers.controller('AddFilmCtrl', ['$scope', '$location', '$routeParams', '$http', '$timeout',
-    function ($scope, $location, $routeParams, $http, $timeout) {
-        var nb_elem_row = 4;
-        $scope.selected_imdb = false;
-        $scope.search_imdb = "harry";
-        $scope.imdb_res = [];
-        $scope.select_imdb = function(id){
-            $http.get(API_URLS.detail_movie.replace('<id_movie>', id)).success(function (res){
-                $scope.selected_imdb = id;
-                $scope.new_movie = new Movie(id, res);
-            }).error(function (res){
-               console.log(res); 
-            });
+powzfilmControllers.controller('AddFilmCtrl', ['$scope', '$location', '$routeParams', '$http', '$timeout', '$log', '$q',
+    function ($scope, $location, $routeParams, $http, $timeout, $log, $q) {
+        //IMDB search control
+        var self = this;
+        $scope.page = 1;
+        self.selectedItem = null;
+        self.searchText = null;
+        self.querySearch = querySearch;
+        function querySearch(query) {
+            var results = query ? [] : deferred;
+            deferred = $q.defer();
+            $http.get(API_URLS.search_movie
+                    .replace('<search>', query).replace('<page>', $scope.page))
+                    .success(function (res) {
+                        for (var r in res.results) {
+                            res.results[r].release_date = new Date(res.results[r].release_date);
+                            results.push(res.results[r]);
+                        }
+                        deferred.resolve(results);
+                        return deferred.promise;
+                    });
+            return results;
         };
-        $http.get(API_URLS.genres).success(function (res){
-                $scope.genres = {};
-                for (var r in res['genres'])
-                    $scope.genres[res['genres'][r]['id']] = res['genres'][r];
-            }).error(function (res){
-               console.log(res); 
-            });
+        self.selectedItemChange = function(item) {
+            if (angular.isDefined(item))
+                $http.get(API_URLS.detail_movie.replace('<id_movie>', item.id)).success(function (res) {
+                    $scope.new_movie = new Movie(item.id, res);
+                });
+            else
+                $scope.new_movie = undefined;
+        };
         
-        $scope.unselectGenre = function(id){delete $scope.new_movie.genres[id];};
-        
-        $scope.change_selected_imdb = function(){$scope.selected_imdb = false;};
-        var filterTextTimeout;
-        $scope.$watch('search_imdb', function (val) {
-            if (filterTextTimeout) $timeout.cancel(filterTextTimeout);
-            filterTextTimeout = $timeout(function() {
-                $scope.page = 1;
-                if ($scope.search_imdb.length > LIMIT_LENGTH_SEARCH){
-                    $scope.selected_imdb = null;
-                    $http.get(API_URLS.search_movie
-                            .replace('<search>', $scope.search_imdb)
-                            .replace('<page>', $scope.page))
-                        .success(function (res){
-                            var results = {};
-                            for (var r in res.results)
-                                results[res.results[r].id] = res.results[r];
-                            res.results = results;
-                            $scope.imdb_res = res;
-                        }).error(function (res){
-                            console.log(res);
-                        });
-                    } else {
-                        $scope.imdb_res = [];
-                    }
-            }, DELAY_SEARCH);
-        });
+        // Genre control
+        $scope.genreAdd = undefined;
+        $scope.addGenre = function (){
+            var gId = parseInt($scope.genreAdd);
+            for (var g in $scope.genres)
+                if ($scope.genres[g].id === gId){
+                    $scope.new_movie.genres.push($scope.genres[g]);
+                    break;
+                }
+            $scope.genreAdd = undefined;
+        };
+        $scope.removeGenre = function (genre) {
+            if (angular.isDefined($scope.new_movie))
+                for (var g in $scope.new_movie.genres)
+                    if ($scope.new_movie.genres[g].id === genre.id)
+                        return $scope.new_movie.genres.splice(g, 1);
+        };
+        $scope.genreNoExist = function (genre) {
+            if (angular.isDefined($scope.new_movie))
+                for (var g in $scope.new_movie.genres)
+                    if ($scope.new_movie.genres[g].id === genre.id)
+                        return false;
+            return true;
+        };
+        $http.get(API_URLS.genres).success(function (res) {$scope.genres = res['genres'];});
     }
 ]);
